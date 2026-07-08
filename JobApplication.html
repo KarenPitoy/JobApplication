@@ -1,0 +1,3293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #070a14;
+            --navy-mid: #0d1326;
+            --navy-glass: rgba(255, 255, 255, 0.045);
+            --navy-glass-strong: rgba(255, 255, 255, 0.08);
+            --border-soft: rgba(255, 255, 255, 0.09);
+            --blue: #3b82f6;
+            --blue-soft: #60a5fa;
+            --blue-deep: #1d4ed8;
+            --yellow: #f5c518;
+            --yellow-soft: #ffe08a;
+            --text-hi: #eef2f8;
+            --text-mid: #a6b0c3;
+            --text-low: #5f6b82;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        html,
+        body {
+            background: var(--navy-deep);
+            color: var(--text-hi);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-blue {
+            width: 520px;
+            height: 520px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.35), transparent 70%);
+            top: -180px;
+            left: -120px;
+        }
+
+        .orb-yellow {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(245, 197, 24, 0.22), transparent 70%);
+            bottom: -160px;
+            right: -100px;
+        }
+
+        .orb-blue2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.18), transparent 70%);
+            top: 40%;
+            right: 15%;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1500px;
+            width: 100%;
+            max-height: 100vh;
+            margin: 0 auto;
+            padding: 28px 28px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header.top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .brand-eyebrow {
+            font-size: 12px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--yellow);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--blue-soft) 60%, var(--yellow-soft) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-mid);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: var(--navy-glass);
+            border: 1px solid var(--border-soft);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 10px 16px;
+            min-width: 86px;
+            text-align: center;
+        }
+
+        .stat-pill .num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-hi);
+        }
+
+        .stat-pill .lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-mid);
+            margin-top: 2px;
+        }
+
+        .stat-pill.accent .num {
+            color: var(--yellow);
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-shrink: 0;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: var(--navy-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-hi);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .btn:hover {
+            background: var(--navy-glass-strong);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 0 10px 28px -6px rgba(37, 99, 235, 0.75);
+        }
+
+        .btn.gold {
+            background: linear-gradient(135deg, #d4a30f, var(--yellow));
+            border-color: transparent;
+            color: #1a1400;
+            box-shadow: 0 8px 24px -8px rgba(245, 197, 24, 0.45);
+        }
+
+        .btn.gold:hover {
+            box-shadow: 0 10px 28px -6px rgba(245, 197, 24, 0.6);
+        }
+
+        .btn.danger {
+            color: #ff9c9c;
+        }
+
+        .btn.danger:hover {
+            background: rgba(255, 80, 80, 0.1);
+            border-color: rgba(255, 120, 120, 0.3);
+        }
+
+        .btn.danger-solid {
+            background: linear-gradient(135deg, #b91c1c, #ef4444);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 8px 24px -8px rgba(239, 68, 68, 0.55);
+        }
+
+        .btn.danger-solid:hover {
+            box-shadow: 0 10px 28px -6px rgba(239, 68, 68, 0.7);
+        }
+
+        .btn.small {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            background: var(--navy-glass);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 10px 14px 10px 34px;
+            color: var(--text-hi);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            width: 220px;
+            backdrop-filter: blur(20px);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-low);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--blue-soft);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            color: var(--text-low);
+        }
+
+        .table-card {
+            background: var(--navy-glass);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 2000px;
+            table-layout: fixed;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(180deg, rgba(20, 28, 50, 0.97), rgba(15, 20, 38, 0.97));
+            backdrop-filter: blur(10px);
+            text-align: left;
+            padding: 16px 16px;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--blue-soft);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-soft);
+            white-space: nowrap;
+            z-index: 2;
+            width: 180px;
+        }
+
+        thead th.col-notes {
+            min-width: 260px;
+            width: 260px;
+        }
+
+        thead th .th-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        thead th .del-col-btn {
+            opacity: 0;
+            background: none;
+            border: none;
+            color: var(--text-low);
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: opacity .15s, color .15s;
+        }
+
+        thead th:hover .del-col-btn {
+            opacity: 1;
+        }
+
+        thead th .del-col-btn:hover {
+            color: #ff8080;
+        }
+
+        thead th[draggable="true"] {
+            cursor: grab;
+            user-select: none;
+        }
+
+        thead th.col-dragging {
+            opacity: .35;
+        }
+
+        thead th.drag-over-left {
+            box-shadow: inset 3px 0 0 var(--yellow);
+        }
+
+        thead th.drag-over-right {
+            box-shadow: inset -3px 0 0 var(--yellow);
+        }
+
+        .col-grip {
+            color: var(--text-low);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            letter-spacing: -1px;
+            font-size: 11px;
+            opacity: .5;
+        }
+
+        thead th:hover .col-grip {
+            opacity: .9;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background .15s ease, box-shadow .15s ease;
+            height: 88px;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        /* Row status highlighting is now manual via stat-pill clicks */
+
+        tbody td {
+            padding: 0;
+            font-size: 13.5px;
+            vertical-align: middle;
+            height: 88px;
+            max-height: 88px;
+            overflow: hidden;
+            text-align: center;
+            width: 180px;
+            min-width: 180px;
+        }
+
+        .cell-inner {
+            padding: 13px 16px;
+            outline: none;
+            color: var(--text-hi);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            text-align: center;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            margin: 4px auto;
+            transition: background .12s, border-color .12s;
+            max-width: 170px;
+        }
+
+        .cell-inner:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .cell-inner:focus {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(96, 165, 250, 0.4);
+            white-space: pre-wrap;
+            overflow: visible;
+            text-overflow: clip;
+            max-height: 120px;
+            overflow-y: auto;
+            word-break: break-word;
+            position: relative;
+            z-index: 5;
+            color: var(--text-hi);
+        }
+
+        .cell-inner:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-mid);
+        }
+
+        .cell-inner a {
+            color: var(--blue-soft);
+        }
+
+        select.type-select,
+        select.status-select {
+            margin: 4px auto;
+            padding: 13px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-soft);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-hi);
+            font-family: 'Inter', sans-serif;
+            font-size: 12.5px;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            text-align: center;
+            text-align-last: center;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23a6b0c3'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 26px;
+            width: 170px;
+            min-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        select.type-select:focus,
+        select.status-select:focus {
+            border-color: var(--blue-soft);
+        }
+
+        select.type-select option,
+        select.status-select option {
+            background: #131a2e;
+            color: #eef2f8;
+        }
+
+        .status-badge-wrap select.status-select {
+            font-weight: 600;
+        }
+
+        .status-Applied {
+            color: var(--blue-soft);
+        }
+
+        .status-Interview {
+            color: var(--yellow);
+        }
+
+        .status-Offer {
+            color: #5ee6a0;
+        }
+
+        .status-Rejected {
+            color: #ff8f8f;
+        }
+
+        .status-Ghosted {
+            color: var(--text-low);
+        }
+
+        .status-Withdrawn {
+            color: #c99bff;
+        }
+
+        td.row-actions {
+            padding: 4px 8px;
+            text-align: center;
+        }
+
+        .row-del-btn {
+            background: none;
+            border: none;
+            color: var(--text-low);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity .15s, color .15s, background .15s;
+        }
+
+        tr:hover .row-del-btn {
+            opacity: 1;
+        }
+
+        .row-del-btn:hover {
+            color: #ff8080;
+            background: rgba(255, 80, 80, 0.1);
+        }
+
+        .link-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .link-cell .cell-inner {
+            min-width: 0;
+        }
+
+        .link-open {
+            flex-shrink: 0;
+            color: var(--text-low);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+        }
+
+        .link-open:hover {
+            color: var(--blue-soft);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .link-open svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-mid);
+        }
+
+        .empty-state svg {
+            width: 40px;
+            height: 40px;
+            color: var(--text-low);
+            margin-bottom: 12px;
+        }
+
+        .empty-state .title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            color: var(--text-hi);
+            margin-bottom: 4px;
+        }
+
+        .footer-note {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-low);
+            text-align: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(20, 28, 50, 0.95);
+            border: 1px solid var(--border-soft);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-hi);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s, transform .25s;
+            z-index: 50;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            border-color: rgba(255, 120, 120, 0.4);
+            color: #ffb3b3;
+        }
+
+        ::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 6, 14, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 380px;
+            background: linear-gradient(180deg, rgba(24, 32, 56, 0.98), rgba(14, 19, 36, 0.98));
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-hi);
+            margin-bottom: 18px;
+        }
+
+        .modal-message {
+            font-size: 13.5px;
+            color: var(--text-mid);
+            line-height: 1.5;
+            margin: -8px 0 4px;
+        }
+
+        .modal-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-mid);
+            margin: 14px 0 6px;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: var(--text-hi);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .modal-input:focus {
+            border-color: var(--blue-soft);
+        }
+
+        select.modal-input {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23a6b0c3'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 28px;
+            cursor: pointer;
+        }
+
+        select.modal-input option {
+            background: #131a2e;
+            color: #eef2f8;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .date-cell-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 16px;
+            margin: 4px auto;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background .12s, border-color .12s;
+            color: var(--text-hi);
+            font-size: 13px;
+            width: 170px;
+            min-width: 170px;
+        }
+
+        .date-cell-inner.error {
+            border-color: rgba(239, 68, 68, 0.6);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 12px -2px rgba(239, 68, 68, 0.3);
+            animation: dateErrorPulse 1.5s ease infinite;
+        }
+
+        @keyframes dateErrorPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px -2px rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 18px -2px rgba(239, 68, 68, 0.5);
+            }
+        }
+
+        .date-error-tooltip {
+            position: fixed;
+            z-index: 100;
+            background: linear-gradient(180deg, rgba(40, 20, 20, 0.98), rgba(30, 10, 10, 0.98));
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #ff9c9c;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 12px 30px -10px rgba(239, 68, 68, 0.25);
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: opacity .2s, transform .2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .date-error-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .date-cell-inner:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .date-cell-inner.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(96, 165, 250, 0.4);
+        }
+
+        .date-cell-inner .cal-icon {
+            flex-shrink: 0;
+            width: 14px;
+            height: 14px;
+            color: var(--blue-soft);
+            opacity: .85;
+        }
+
+        .date-cell-inner .date-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .date-cell-inner .date-text.placeholder {
+            color: var(--text-low);
+        }
+
+        .date-cell-inner .date-clear {
+            flex-shrink: 0;
+            opacity: 0;
+            color: var(--text-low);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px 4px;
+            border-radius: 5px;
+            line-height: 1;
+            transition: opacity .15s, color .15s;
+        }
+
+        .date-cell-inner:hover .date-clear {
+            opacity: 1;
+        }
+
+        .date-cell-inner .date-clear:hover {
+            color: #ff8080;
+            background: rgba(255, 80, 80, 0.1);
+        }
+
+        .date-warning-icon {
+            display: none;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            cursor: help;
+        }
+
+        .date-warning-icon svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .cal-popup {
+            position: fixed;
+            z-index: 60;
+            width: 264px;
+            background: linear-gradient(180deg, rgba(18, 25, 46, 0.98), rgba(12, 17, 33, 0.98));
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            padding: 14px;
+            max-height: 80vh;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(-6px) scale(.98);
+            pointer-events: none;
+            transition: opacity .15s ease, transform .15s ease;
+        }
+
+        .cal-popup.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .cal-nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-soft);
+            color: var(--text-hi);
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+
+        .cal-nav-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(96, 165, 250, 0.4);
+        }
+
+        .cal-nav-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .cal-month-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-hi);
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .cal-month-label:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 4px;
+        }
+
+        .cal-weekdays span {
+            text-align: center;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--text-low);
+            padding: 4px 0;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12.5px;
+            color: var(--text-hi);
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: background .12s, border-color .12s, color .12s;
+        }
+
+        .cal-day:hover {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(96, 165, 250, 0.35);
+        }
+
+        .cal-day.outside {
+            color: var(--text-low);
+            opacity: .4;
+        }
+
+        .cal-day.today {
+            border-color: rgba(245, 197, 24, 0.5);
+            color: var(--yellow-soft);
+            font-weight: 600;
+        }
+
+        .cal-day.selected {
+            background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 14px -4px rgba(37, 99, 235, 0.7);
+        }
+
+        .cal-day.selected.today {
+            border-color: transparent;
+        }
+
+        .cal-day.disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+            pointer-events: none;
+            color: var(--text-low);
+        }
+
+        .cal-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .cal-footer button {
+            background: none;
+            border: none;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: .02em;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 6px;
+        }
+
+        .cal-footer .cal-today-btn {
+            color: var(--yellow);
+        }
+
+        .cal-footer .cal-today-btn:hover {
+            background: rgba(245, 197, 24, 0.12);
+        }
+
+        .cal-footer .cal-clear-btn {
+            color: var(--text-mid);
+        }
+
+        .cal-footer .cal-clear-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ff9c9c;
+        }
+
+
+        .interview-dropdown-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .interview-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s ease;
+            box-shadow: 0 6px 20px -6px rgba(14, 165, 233, 0.5);
+            width: 40px;
+            height: 40px;
+        }
+
+        .interview-dropdown-btn:hover {
+            box-shadow: 0 8px 24px -4px rgba(14, 165, 233, 0.65);
+            transform: translateY(-1px);
+        }
+
+        .interview-dropdown-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform .2s ease;
+        }
+
+        .interview-dropdown-btn.active svg {
+            transform: rotate(180deg);
+        }
+
+        .interview-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: max-height .25s ease, opacity .2s ease, transform .2s ease;
+            z-index: 80;
+            pointer-events: none;
+        }
+
+        .interview-dropdown-menu.show {
+            max-height: 70vh;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .interview-dropdown-card {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .interview-dropdown-card {
+            background: linear-gradient(180deg, rgba(18, 28, 52, 0.98), rgba(10, 16, 32, 0.98));
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            padding: 16px;
+        }
+
+        .interview-dropdown-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-hi);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .interview-dropdown-header svg {
+            width: 16px;
+            height: 16px;
+            color: #38bdf8;
+        }
+
+        .interview-dropdown-empty {
+            text-align: center;
+            color: var(--text-low);
+            font-size: 12px;
+            padding: 16px 0;
+        }
+
+        .interview-item {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 8px;
+            transition: background .15s, border-color .15s;
+        }
+
+        .interview-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .interview-item:hover {
+            background: rgba(56, 189, 248, 0.06);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+
+        .interview-item-company {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-hi);
+            margin-bottom: 4px;
+        }
+
+        .interview-item-title {
+            font-size: 11.5px;
+            color: var(--text-mid);
+            margin-bottom: 8px;
+        }
+
+        .interview-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11.5px;
+            color: var(--text-mid);
+            margin-bottom: 4px;
+        }
+
+        .interview-item-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .interview-item-row svg {
+            width: 13px;
+            height: 13px;
+            color: var(--blue-soft);
+            flex-shrink: 0;
+        }
+
+        .interview-item-notes {
+            font-size: 11.5px;
+            color: var(--text-mid);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            line-height: 1.5;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .interview-item-notes-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--yellow);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .sync-status-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: var(--navy-glass);
+            backdrop-filter: blur(20px);
+            color: var(--text-mid);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .sync-status-btn:hover {
+            background: var(--navy-glass-strong);
+            color: var(--text-hi);
+        }
+
+        .sync-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--text-low);
+        }
+
+        .sync-dot.ok {
+            background: #22c55e;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+        }
+
+        .sync-dot.err {
+            background: #ef4444;
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.7);
+        }
+
+        .sync-dot.pending {
+            background: var(--yellow);
+            box-shadow: 0 0 6px rgba(245, 197, 24, 0.7);
+        }
+
+        .sync-key-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .sync-key-row .modal-input {
+            flex: 1;
+        }
+
+        @media (max-width:1200px) {
+            .wrap {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat-pill {
+                padding: 8px 12px;
+                min-width: 70px;
+            }
+
+            .stat-pill .num {
+                font-size: 18px;
+            }
+
+            .toolbar {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .interview-dropdown-btn {
+                padding: 8px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .interview-dropdown-menu {
+                width: 280px;
+            }
+        }
+
+        @media (max-width:768px) {
+            .wrap {
+                padding: 16px 12px;
+            }
+
+            header.top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .stats {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .stat-pill {
+                padding: 6px 10px;
+                min-width: 60px;
+            }
+
+            .stat-pill .num {
+                font-size: 16px;
+            }
+
+            .stat-pill .lbl {
+                font-size: 9px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .toolbar-left {
+                flex-wrap: wrap;
+                width: 100%;
+            }
+
+            .toolbar-right {
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .interview-dropdown-btn {
+                padding: 8px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .interview-dropdown-card {
+                width: 100%;
+            }
+
+            thead th {
+                padding: 12px 10px;
+                font-size: 10px;
+                width: 140px;
+                min-width: 140px;
+            }
+
+            tbody td {
+                width: 140px;
+                min-width: 140px;
+            }
+
+            .cell-inner {
+                padding: 10px 12px;
+                font-size: 12px;
+                max-width: 130px;
+            }
+
+            select.type-select,
+            select.status-select {
+                width: 130px;
+                min-width: 130px;
+                padding: 10px 8px;
+                font-size: 11px;
+            }
+
+            .date-cell-inner {
+                width: 130px;
+                min-width: 130px;
+                padding: 10px 12px;
+            }
+
+            .table-card {
+                border-radius: 12px;
+            }
+        }
+
+        @media (max-width:640px) {
+            .wrap {
+                padding: 16px 10px 40px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .interview-dropdown-card {
+                width: 100%;
+            }
+
+            .modal-card {
+                padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <base target="_blank">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+    <div class="bg-orb orb-blue"></div>
+    <div class="bg-orb orb-yellow"></div>
+    <div class="bg-orb orb-blue2"></div>
+
+    <div class="wrap">
+        <header class="top">
+            <div>
+                <div class="brand-eyebrow">Karen Jeszary I. Pitoy</div>
+                <h1>Job Application Tracker</h1>
+                <div class="subtitle">Every application, one glass table.</div>
+            </div>
+            <div class="stats" id="statsRow"></div>
+        </header>
+
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn primary" id="addRowBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Add row
+                </button>
+                <button class="btn gold" id="addColBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Add column
+                </button>
+                <button class="btn" id="exportBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                    </svg>
+                    Export CSV
+                </button>
+                <div class="interview-dropdown-wrap" id="interviewDropdownWrap">
+                    <button class="interview-dropdown-btn" id="interviewDropdownBtn" title="Upcoming Interviews">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="3" />
+                            <path d="M16 2v4M8 2v4M3 10h18" />
+                        </svg>
+                    </button>
+                    <div class="interview-dropdown-menu" id="interviewDropdownMenu">
+                        <div class="interview-dropdown-card" id="interviewDropdownCard">
+                            <div class="interview-dropdown-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="3" />
+                                    <path d="M16 2v4M8 2v4M3 10h18" />
+                                </svg>
+                                Upcoming Interviews
+                            </div>
+                            <div id="interviewDropdownList"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="sync-status-btn" id="syncStatusBtn" title="Cloud sync settings">
+                    <span class="sync-dot" id="syncDot"></span>
+                    <span id="syncStatusLabel">Cloud sync</span>
+                </button>
+            </div>
+            <div class="toolbar-right">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search applications...">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-scroll">
+                <table id="jobTable">
+                    <thead>
+                        <tr id="headerRow"></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="M3 10h18M9 4v16" />
+                </svg>
+                <div class="title">No applications yet</div>
+                <div>Click "Add row" to log your first application.</div>
+            </div>
+        </div>
+
+        <div class="footer-note">Synced to Supabase when configured · falls back to your browser · Export CSV to keep a
+            backup</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="modal-overlay" id="colModalOverlay">
+        <div class="modal-card">
+            <div class="modal-title">Add column</div>
+            <label class="modal-label">Column name</label>
+            <input type="text" id="colNameInput" class="modal-input" placeholder="e.g. Referral Source">
+
+            <label class="modal-label">Column type</label>
+            <select id="colTypeInput" class="modal-input">
+                <option value="text">Free text</option>
+                <option value="date">Date</option>
+                <option value="select">Dropdown</option>
+            </select>
+
+            <div id="colOptionsWrap" style="display:none;">
+                <label class="modal-label">Dropdown options (comma separated)</label>
+                <input type="text" id="colOptionsInput" class="modal-input" placeholder="e.g. High, Medium, Low">
+            </div>
+
+            <label class="modal-label">Position</label>
+            <select id="colPositionInput" class="modal-input"></select>
+
+            <div class="modal-actions">
+                <button class="btn" id="colCancelBtn">Cancel</button>
+                <button class="btn gold" id="colConfirmBtn">Add column</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModalOverlay">
+        <div class="modal-card">
+            <div class="modal-title" id="confirmModalTitle">Delete this?</div>
+            <p class="modal-message" id="confirmModalMessage">This can't be undone.</p>
+            <div class="modal-actions">
+                <button class="btn" id="confirmCancelBtn">Cancel</button>
+                <button class="btn danger-solid" id="confirmYesBtn">Yes, delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="syncModalOverlay">
+        <div class="modal-card">
+            <div class="modal-title">Cloud sync (Supabase)</div>
+            <p class="modal-message" id="syncModalStatusText">Not connected.</p>
+
+            <label class="modal-label">Sync key</label>
+            <div class="sync-key-row">
+                <input type="text" id="syncKeyInput" class="modal-input" placeholder="e.g. karen-job-tracker">
+                <button class="btn small" id="syncKeyCopyBtn">Copy</button>
+            </div>
+            <p class="modal-message" style="font-size:12px;margin-top:8px;">
+                Any device that loads this file with the same sync key shares this exact board.
+                Keep it private — anyone with the key and this file can read/edit your data.
+            </p>
+
+            <div class="modal-actions">
+                <button class="btn" id="syncCancelBtn">Close</button>
+                <button class="btn primary" id="syncApplyBtn">Save &amp; reload data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const STORAGE_KEY = 'jobtracker:data';
+            const SYNC_KEY_STORAGE = 'jobtracker:synckey';
+            const MAX_CELL_CHARS = 60; // characters before a cell truncates with an ellipsis
+
+            // ---- Supabase configuration ----
+            // Fill these in with your own project's values (Project Settings -> API).
+            // The anon/public key is safe to expose in client-side code; row-level
+            // security policies (see the SQL provided alongside this file) control
+            // what that key is actually allowed to do.
+            const SUPABASE_URL = 'https://vqjnrqdoptyualaaiijp.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxam5ycWRvcHR5dWFsYWFpaWpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNzcxMDAsImV4cCI6MjA5ODk1MzEwMH0.5vCaE2uPq3wCybAvesFDQF-4GZDriDHH8KnnxmPUBzg';
+            const SUPABASE_TABLE = 'job_applications';
+
+            // Maps this app's internal column ids to the SQL column names in
+            // the job_applications table (see the schema you supplied).
+            const SQL_FIELD_MAP = {
+                company: 'company_name',
+                link: 'job_link',
+                title: 'job_title',
+                dateApplied: 'date_applied',
+                deadline: 'deadline',
+                jobType: 'job_type',
+                salary: 'salary',
+                contact: 'contact',
+                location: 'location',
+                interviewDate: 'interview_date',
+                status: 'status',
+                notes: 'notes'
+            };
+            const DATE_FIELD_IDS = ['dateApplied', 'deadline', 'interviewDate'];
+
+            // mm/dd/yyyy (UI) <-> yyyy-mm-dd (SQL date) conversion
+            function mmddyyyyToISO(str) {
+                if (!str) return null;
+                const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+                if (!m) return null;
+                const mm = m[1].padStart(2, '0');
+                const dd = m[2].padStart(2, '0');
+                return `${m[3]}-${mm}-${dd}`;
+            }
+            function isoToMMDDYYYY(str) {
+                if (!str) return '';
+                const m = str.toString().match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (!m) return '';
+                return `${m[2]}/${m[3]}/${m[1]}`;
+            }
+
+
+            let supabaseClient = null;
+            if (typeof window.supabase !== 'undefined' && SUPABASE_URL.indexOf('YOUR-PROJECT-REF') === -1 && SUPABASE_ANON_KEY.indexOf('YOUR-SUPABASE-ANON-KEY') === -1) {
+                try {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } catch (e) {
+                    console.warn('Supabase client failed to initialize', e);
+                    supabaseClient = null;
+                }
+            }
+
+            function getSyncKey() {
+                let key = null;
+                try { key = localStorage.getItem(SYNC_KEY_STORAGE); } catch (e) { /* ignore */ }
+                if (!key) {
+                    key = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('key_' + Math.random().toString(36).slice(2) + Date.now());
+                    try { localStorage.setItem(SYNC_KEY_STORAGE, key); } catch (e) { /* ignore */ }
+                }
+                return key;
+            }
+
+            function setSyncKey(key) {
+                try { localStorage.setItem(SYNC_KEY_STORAGE, key); } catch (e) { /* ignore */ }
+            }
+
+            const DEFAULT_COLUMNS = [
+                { id: 'company', label: 'Company Name', type: 'text', placeholder: 'e.g. K15 Labs' },
+                { id: 'link', label: 'Job Link', type: 'link', placeholder: 'Paste URL' },
+                { id: 'title', label: 'Job Title', type: 'text', placeholder: 'e.g. Full-Stack Developer' },
+                { id: 'dateApplied', label: 'Date Applied', type: 'date' },
+                { id: 'deadline', label: 'Deadline', type: 'date' },
+                { id: 'jobType', label: 'Type of Job', type: 'select', options: ['Full-time', 'Part-time', 'Internship', 'Contract', 'Freelance', 'Remote'], placeholder: 'Select' },
+                { id: 'salary', label: 'Salary', type: 'text', placeholder: 'e.g. ₱25,000/mo' },
+                { id: 'contact', label: 'Contact Email/LinkedIn', type: 'contact', placeholder: 'email or LinkedIn' },
+                { id: 'location', label: 'Location', type: 'text', placeholder: 'e.g. Cebu City / Remote' },
+                { id: 'interviewDate', label: 'Interview Date', type: 'date' },
+                { id: 'status', label: 'Application Status', type: 'status', options: ['Applied', 'Interview', 'Offer', 'Rejected', 'Ghosted', 'Withdrawn'], placeholder: 'Select' },
+                { id: 'notes', label: 'Notes', type: 'text', placeholder: 'Add notes...', wide: true }
+            ];
+
+            let columns = [];
+            let rows = [];
+            let idCounter = 1;
+
+            function uid(prefix) { return prefix + '_' + (idCounter++) + '_' + Math.random().toString(36).slice(2, 7); }
+
+            function newRow() {
+                const r = { id: uid('row') };
+                columns.forEach(c => r[c.id] = '');
+                return r;
+            }
+
+            function hasClaudeStorage() {
+                return typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+            }
+
+            let lastSyncErrorMsg = '';
+
+            function setSyncStatus(state, label, errMsg) {
+                const dot = document.getElementById('syncDot');
+                const lbl = document.getElementById('syncStatusLabel');
+                if (!dot || !lbl) return;
+                dot.className = 'sync-dot' + (state ? (' ' + state) : '');
+                lbl.textContent = label;
+                if (state === 'err') {
+                    lastSyncErrorMsg = errMsg || 'Unknown sync error';
+                    dot.title = lastSyncErrorMsg;
+                    document.getElementById('syncStatusBtn').title = lastSyncErrorMsg;
+                } else {
+                    lastSyncErrorMsg = '';
+                    dot.title = '';
+                    document.getElementById('syncStatusBtn').title = 'Cloud sync settings';
+                }
+            }
+
+            // NOTE: job_applications is a fixed-schema table (one row per application,
+            // columns = company_name, job_link, job_title, date_applied, deadline,
+            // job_type, salary, contact, location, interview_date, status, notes).
+            // Because of that, any custom column you add in the UI ("Add column")
+            // has nowhere to live in Supabase — it will keep working locally in this
+            // browser, but it won't travel to other devices through cloud sync.
+            async function loadFromSupabase() {
+                if (!supabaseClient) return null;
+                const key = getSyncKey();
+                setSyncStatus('pending', 'Syncing…');
+                try {
+                    const { data, error } = await supabaseClient
+                        .from(SUPABASE_TABLE)
+                        .select('*')
+                        .eq('board_id', key)
+                        .order('row_order', { ascending: true });
+                    if (error) throw error;
+                    setSyncStatus('ok', 'Cloud sync on');
+                    if (data && data.length) {
+                        const mappedRows = data.map(rec => {
+                            const r = { id: uid('row'), _dbId: rec.id };
+                            Object.keys(SQL_FIELD_MAP).forEach(fieldId => {
+                                const sqlCol = SQL_FIELD_MAP[fieldId];
+                                const raw = rec[sqlCol];
+                                r[fieldId] = DATE_FIELD_IDS.includes(fieldId) ? isoToMMDDYYYY(raw) : (raw || '');
+                            });
+                            return r;
+                        });
+                        return {
+                            columns: DEFAULT_COLUMNS.slice(),
+                            rows: mappedRows,
+                            idCounter: mappedRows.length + 10
+                        };
+                    }
+                    return null; // no rows yet for this key
+                } catch (e) {
+                    console.warn('Supabase load failed', e);
+                    const msg = (e && e.message) ? e.message : 'unknown error';
+                    setSyncStatus('err', 'Sync error', msg);
+                    showToast('Cloud sync load failed: ' + msg, true);
+                    return null;
+                }
+            }
+
+            async function saveToSupabase() {
+                if (!supabaseClient) return false;
+                const key = getSyncKey();
+                setSyncStatus('pending', 'Saving…');
+                try {
+                    // Simplest reliable strategy for a single-user board: replace
+                    // everything under this board_id with the current in-memory rows.
+                    // This guarantees deletes/reorders/edits all end up correct without
+                    // needing to track per-row dirty state.
+                    const { error: delErr } = await supabaseClient
+                        .from(SUPABASE_TABLE)
+                        .delete()
+                        .eq('board_id', key);
+                    if (delErr) throw delErr;
+
+                    if (rows.length > 0) {
+                        const payloadRows = rows.map((r, idx) => {
+                            const rec = { board_id: key, row_order: idx };
+                            Object.keys(SQL_FIELD_MAP).forEach(fieldId => {
+                                const sqlCol = SQL_FIELD_MAP[fieldId];
+                                const val = r[fieldId];
+                                if (DATE_FIELD_IDS.includes(fieldId)) {
+                                    rec[sqlCol] = mmddyyyyToISO(val);
+                                } else {
+                                    rec[sqlCol] = val || null;
+                                }
+                            });
+                            return rec;
+                        });
+                        const { error: insErr } = await supabaseClient
+                            .from(SUPABASE_TABLE)
+                            .insert(payloadRows);
+                        if (insErr) throw insErr;
+                    }
+                    setSyncStatus('ok', 'Cloud sync on');
+                    return true;
+                } catch (e) {
+                    console.warn('Supabase save failed', e);
+                    const msg = (e && e.message) ? e.message : 'unknown error';
+                    setSyncStatus('err', 'Sync error', msg);
+                    showToast('Cloud sync save failed: ' + msg, true);
+                    return false;
+                }
+            }
+
+            async function loadData() {
+                // 1) Try Supabase first, if configured.
+                if (supabaseClient) {
+                    const remote = await loadFromSupabase();
+                    if (remote) {
+                        columns = remote.columns;
+                        rows = remote.rows;
+                        idCounter = remote.idCounter || (rows.length + 10);
+                        return;
+                    }
+                } else {
+                    setSyncStatus('', 'Cloud sync off');
+                }
+
+                // 2) Try Claude's built-in storage (works inside claude.ai artifacts)
+                if (hasClaudeStorage()) {
+                    try {
+                        const res = await window.storage.get(STORAGE_KEY, false);
+                        if (res && res.value) {
+                            const parsed = JSON.parse(res.value);
+                            columns = parsed.columns && parsed.columns.length ? parsed.columns : DEFAULT_COLUMNS.slice();
+                            rows = parsed.rows || [];
+                            idCounter = parsed.idCounter || (rows.length + 10);
+                            return;
+                        }
+                    } catch (e) { /* key doesn't exist yet, fall through */ }
+                }
+
+                // 3) Fallback: plain browser localStorage (works when this file is opened directly, outside claude.ai)
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        columns = parsed.columns && parsed.columns.length ? parsed.columns : DEFAULT_COLUMNS.slice();
+                        rows = parsed.rows || [];
+                        idCounter = parsed.idCounter || (rows.length + 10);
+                        return;
+                    }
+                } catch (e) { /* localStorage unavailable or empty */ }
+
+                columns = DEFAULT_COLUMNS.slice();
+                rows = [newRow(), newRow(), newRow()];
+            }
+
+            async function saveData() {
+                const payload = JSON.stringify({ columns, rows, idCounter });
+                let savedSomewhere = false;
+
+                if (supabaseClient) {
+                    const ok = await saveToSupabase();
+                    savedSomewhere = savedSomewhere || ok;
+                }
+
+                if (hasClaudeStorage()) {
+                    try {
+                        await window.storage.set(STORAGE_KEY, payload, false);
+                        savedSomewhere = true;
+                    } catch (e) { /* fall through to localStorage */ }
+                }
+
+                try {
+                    localStorage.setItem(STORAGE_KEY, payload);
+                    savedSomewhere = true;
+                } catch (e) { /* localStorage unavailable (e.g. private browsing) */ }
+
+                if (!savedSomewhere) {
+                    showToast('Could not save changes', true);
+                }
+            }
+
+            let saveTimer = null;
+            function scheduleSave() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(saveData, 200);
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    clearTimeout(saveTimer);
+                    saveData();
+                }
+            });
+            window.addEventListener('beforeunload', () => {
+                clearTimeout(saveTimer);
+                saveData();
+            });
+
+            function showToast(msg, isError) {
+                const t = document.getElementById('toast');
+                t.textContent = msg;
+                t.className = 'toast show' + (isError ? ' error' : '');
+                clearTimeout(t._hideTimer);
+                t._hideTimer = setTimeout(() => { t.className = 'toast'; }, 2200);
+            }
+
+            function statusClass(val) {
+                return 'status-' + (val || '').replace(/\s+/g, '');
+            }
+
+            function rowStatusClass(val) {
+                return val ? 'row-status-' + val.replace(/\s+/g, '') : '';
+            }
+
+            // Keeps "Application Status" and "Interview Date" in sync for a row:
+            // if the status is (or would become) "Interview" but no interview date
+            // is set, the status is forced back to "Applied" and a warning icon is
+            // shown on the Interview Date cell until a date is filled in. Called
+            // after every edit to either field, and once on initial render so data
+            // synced in from another device/session is corrected too.
+            function enforceInterviewConstraint(row, tr, opts) {
+                const statusCol = columns.find(c => c.type === 'status');
+                const interviewDateCol = columns.find(c => c.id === 'interviewDate');
+                if (!statusCol || !interviewDateCol) return false;
+
+                const hasDate = (row[interviewDateCol.id] || '').toString().trim().length > 0;
+                const needsCorrection = row[statusCol.id] === 'Interview' && !hasDate;
+                if (needsCorrection) {
+                    row[statusCol.id] = 'Applied';
+                }
+
+                if (tr) {
+                    const statusSelect = tr.querySelector('select.status-select');
+                    if (statusSelect) {
+                        statusSelect.value = row[statusCol.id] || '';
+                        statusSelect.className = 'status-select ' + statusClass(row[statusCol.id]);
+                        statusSelect.title = row[statusCol.id] || '';
+                    }
+                    const colIdx = columns.findIndex(c => c.id === interviewDateCol.id);
+                    const cells = tr.querySelectorAll('td');
+                    const cellTd = colIdx >= 0 ? cells[colIdx] : null;
+                    const dateCellDiv = cellTd ? cellTd.querySelector('.date-cell-inner') : null;
+                    if (dateCellDiv) {
+                        const warnIcon = dateCellDiv.querySelector('.date-warning-icon');
+                        if (warnIcon) warnIcon.style.display = needsCorrection ? 'inline-flex' : 'none';
+                        dateCellDiv.classList.toggle('error', needsCorrection);
+                    }
+                }
+
+                if (needsCorrection) {
+                    scheduleSave();
+                    if (!(opts && opts.silent)) {
+                        showToast('Interview Date is needed — status set to Applied', true);
+                    }
+                }
+
+                return needsCorrection;
+            }
+
+            // Row status colors mapping
+            const STATUS_COLORS = {
+                'Applied': 'var(--yellow)',
+                'Interview': '#38bdf8',
+                'Offer': '#22c55e',
+                'Rejected': '#ef4444',
+                'Ghosted': '#9ca3af',
+                'Withdrawn': '#f97316'
+            };
+
+            let activeStatusFilter = null;
+
+            function getStatusColor(status) {
+                return STATUS_COLORS[status] || '';
+            }
+
+            function hexToRgba(hex, alpha) {
+                if (hex.startsWith('var(')) {
+                    // For CSS variables like var(--yellow), we can't easily convert
+                    // Just return a fallback rgba
+                    return 'rgba(245,197,24,' + alpha + ')';
+                }
+                if (hex.startsWith('#')) {
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+                }
+                // For rgb() format like var(--yellow) which resolves to a color
+                return hex.replace(')', ',' + alpha + ')');
+            }
+
+            function hasBasicInfo(row) {
+                const companyCol = columns.find(c => c.id === 'company');
+                const titleCol = columns.find(c => c.id === 'title');
+                const dateAppliedCol = columns.find(c => c.id === 'dateApplied');
+                const company = companyCol ? (row[companyCol.id] || '').toString().trim() : '';
+                const title = titleCol ? (row[titleCol.id] || '').toString().trim() : '';
+                const dateApplied = dateAppliedCol ? (row[dateAppliedCol.id] || '').toString().trim() : '';
+                return company.length > 0 && title.length > 0 && dateApplied.length > 0;
+            }
+
+            function highlightRowsByStatus(status) {
+                const statusCol = columns.find(c => c.type === 'status');
+                if (!statusCol) return;
+                const color = getStatusColor(status);
+                if (!color) return;
+
+                document.querySelectorAll('#tableBody tr').forEach(tr => {
+                    const rowId = tr.dataset.rowId;
+                    const row = rows.find(r => r.id === rowId);
+                    if (row && row[statusCol.id] === status && hasBasicInfo(row)) {
+                        tr.style.transition = 'box-shadow .3s ease, background .3s ease';
+                        tr.style.boxShadow = 'inset 0 0 0 1.5px ' + color + ', inset 4px 0 0 ' + color;
+                        tr.style.background = hexToRgba(color, 0.06);
+                    } else {
+                        tr.style.boxShadow = '';
+                        tr.style.background = '';
+                        tr.style.transition = '';
+                    }
+                });
+            }
+
+            function clearRowHighlights() {
+                document.querySelectorAll('#tableBody tr').forEach(tr => {
+                    tr.style.boxShadow = '';
+                    tr.style.background = '';
+                    tr.style.transition = '';
+                });
+                activeStatusFilter = null;
+            }
+
+            function addThousandsCommas(numStr) {
+                const parts = numStr.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return parts.join('.');
+            }
+
+            function formatSalary(val) {
+                if (!val) return val;
+                // Add thousands separators to every number found in the string (handles
+                // ranges like "25000-30000" or plain "25000" alike), without touching
+                // any currency symbol, letter code, or "/mo" style suffix around it.
+                let result = val.replace(/\d[\d,]*(\.\d+)?/g, (match) => addThousandsCommas(match.replace(/,/g, '')));
+                const hasSymbol = /[₱$€£]/.test(result);
+                const hasLetterCode = /^[A-Za-z]{2,4}\s*\d/.test(val);
+                if (!hasSymbol && !hasLetterCode && /^\d/.test(val)) {
+                    result = '₱' + result;
+                }
+                return result;
+            }
+
+            // Truncates long text with an ellipsis for display; full text stays in `row[col.id]`
+            // and is restored automatically when the cell is focused for editing (see wireTruncatedCell).
+            function truncateForDisplay(val) {
+                if (!val) return val;
+                if (val.length <= MAX_CELL_CHARS) return val;
+                return val.slice(0, MAX_CELL_CHARS).trim() + '…';
+            }
+
+            // Wires up an editable cell so it shows truncated text at rest, the full text while
+            // focused/editing, and always keeps a native tooltip with the complete value.
+            function wireTruncatedCell(div, getVal) {
+                const full = getVal() || '';
+                div.textContent = truncateForDisplay(full);
+                div.title = full;
+                div.addEventListener('focus', () => {
+                    div.textContent = full;
+                    placeCaretAtEnd(div);
+                });
+            }
+
+            function placeCaretAtEnd(el) {
+                el.focus();
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+
+            let activeCalPopup = null;
+            let activeCalTrigger = null;
+            let activeCalRepositionFn = null;
+
+            function closeCalendar() {
+                if (activeCalPopup) {
+                    activeCalPopup.classList.remove('show');
+                    const p = activeCalPopup;
+                    setTimeout(() => { if (p.parentNode) p.parentNode.removeChild(p); }, 150);
+                    activeCalPopup = null;
+                }
+                if (activeCalTrigger) {
+                    activeCalTrigger.classList.remove('active');
+                    activeCalTrigger = null;
+                }
+                document.removeEventListener('mousedown', handleCalOutsideClick, true);
+                document.removeEventListener('keydown', handleCalEscape, true);
+                if (activeCalRepositionFn) {
+                    window.removeEventListener('scroll', activeCalRepositionFn, true);
+                    window.removeEventListener('resize', activeCalRepositionFn, true);
+                    activeCalRepositionFn = null;
+                }
+            }
+
+            function handleCalOutsideClick(e) {
+                if (activeCalPopup && !activeCalPopup.contains(e.target) && !(activeCalTrigger && activeCalTrigger.contains(e.target))) {
+                    closeCalendar();
+                }
+            }
+            function handleCalEscape(e) {
+                if (e.key === 'Escape') closeCalendar();
+            }
+
+            function parseDateStr(str) {
+                if (!str) return null;
+                const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+                if (!m) return null;
+                return new Date(parseInt(m[3], 10), parseInt(m[1], 10) - 1, parseInt(m[2], 10));
+            }
+            function formatDateStr(d) {
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${mm}/${dd}/${d.getFullYear()}`;
+            }
+
+            // Converts a mm/dd/yyyy string into a comparable integer (yyyymmdd).
+            // Returns null if the string can't be parsed as a date.
+            function dateStrToNum(str) {
+                const d = parseDateStr(str);
+                if (!d) return null;
+                return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+            }
+
+            const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            function openCalendar(triggerEl, currentValue, onSelect, minDateStr, maxDateStr) {
+                closeCalendar();
+
+                const selectedDate = parseDateStr(currentValue);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayNum = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+
+                let minDateNum = 0;
+                let maxDateNum = 99991231;
+
+                if (minDateStr) {
+                    const n = dateStrToNum(minDateStr);
+                    if (n !== null) minDateNum = n;
+                }
+                if (maxDateStr) {
+                    const n = dateStrToNum(maxDateStr);
+                    if (n !== null) maxDateNum = n;
+                }
+
+                let viewYear = selectedDate ? selectedDate.getFullYear() : today.getFullYear();
+                let viewMonth = selectedDate ? selectedDate.getMonth() : today.getMonth();
+
+                const popup = document.createElement('div');
+                popup.className = 'cal-popup';
+                document.body.appendChild(popup);
+
+                function render() {
+                    popup.innerHTML = '';
+
+                    const header = document.createElement('div');
+                    header.className = 'cal-header';
+                    const prevBtn = document.createElement('button');
+                    prevBtn.className = 'cal-nav-btn';
+                    prevBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+                    prevBtn.addEventListener('click', () => {
+                        viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+                        render();
+                    });
+                    const label = document.createElement('div');
+                    label.className = 'cal-month-label';
+                    label.textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'cal-nav-btn';
+                    nextBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+                    nextBtn.addEventListener('click', () => {
+                        viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+                        render();
+                    });
+                    header.appendChild(prevBtn);
+                    header.appendChild(label);
+                    header.appendChild(nextBtn);
+                    popup.appendChild(header);
+
+                    const weekdays = document.createElement('div');
+                    weekdays.className = 'cal-weekdays';
+                    ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(w => {
+                        const s = document.createElement('span');
+                        s.textContent = w;
+                        weekdays.appendChild(s);
+                    });
+                    popup.appendChild(weekdays);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'cal-grid';
+                    const firstOfMonth = new Date(viewYear, viewMonth, 1);
+                    const startOffset = firstOfMonth.getDay();
+                    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+                    const daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
+
+                    const cells = [];
+                    for (let i = startOffset - 1; i >= 0; i--) {
+                        cells.push({ day: daysInPrevMonth - i, outside: true, month: viewMonth - 1, year: viewYear });
+                    }
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        cells.push({ day: d, outside: false, month: viewMonth, year: viewYear });
+                    }
+                    while (cells.length % 7 !== 0 || cells.length < 42) {
+                        const nextDay = cells.length - (startOffset + daysInMonth) + 1;
+                        cells.push({ day: nextDay, outside: true, month: viewMonth + 1, year: viewYear });
+                        if (cells.length >= 42) break;
+                    }
+
+                    cells.forEach(c => {
+                        const cellDate = new Date(c.year, c.month, c.day);
+                        const cellDateNum = cellDate.getFullYear() * 10000 + (cellDate.getMonth() + 1) * 100 + cellDate.getDate();
+                        const btn = document.createElement('div');
+                        btn.className = 'cal-day';
+                        if (c.outside) btn.classList.add('outside');
+                        if (cellDate.toDateString() === today.toDateString()) btn.classList.add('today');
+                        if (selectedDate && cellDate.toDateString() === selectedDate.toDateString()) btn.classList.add('selected');
+
+                        let isDisabled = false;
+                        if (cellDateNum < minDateNum || cellDateNum > maxDateNum) {
+                            isDisabled = true;
+                        }
+                        if (isDisabled) {
+                            btn.classList.add('disabled');
+                            btn.style.opacity = '0.25';
+                            btn.style.cursor = 'not-allowed';
+                            btn.style.pointerEvents = 'none';
+                        }
+                        btn.textContent = c.day;
+                        btn.addEventListener('click', () => {
+                            const val = formatDateStr(cellDate);
+                            onSelect(val);
+                            closeCalendar();
+                        });
+                        grid.appendChild(btn);
+                    });
+                    popup.appendChild(grid);
+
+                    const footer = document.createElement('div');
+                    footer.className = 'cal-footer';
+                    const todayBtn = document.createElement('button');
+                    todayBtn.className = 'cal-today-btn';
+                    todayBtn.textContent = 'Today';
+                    todayBtn.addEventListener('click', () => {
+                        onSelect(formatDateStr(today));
+                        closeCalendar();
+                    });
+                    const clearBtn = document.createElement('button');
+                    clearBtn.className = 'cal-clear-btn';
+                    clearBtn.textContent = 'Clear';
+                    clearBtn.addEventListener('click', () => {
+                        onSelect('');
+                        closeCalendar();
+                    });
+                    footer.appendChild(todayBtn);
+                    footer.appendChild(clearBtn);
+                    popup.appendChild(footer);
+                }
+
+                render();
+                function positionPopup() {
+                    const rect = triggerEl.getBoundingClientRect();
+                    const popupWidth = 264;
+                    let left = rect.left;
+                    if (left + popupWidth > window.innerWidth - 12) left = window.innerWidth - popupWidth - 12;
+                    if (left < 12) left = 12;
+                    // Always position below the trigger element
+                    let top = rect.bottom + 8;
+                    popup.style.left = left + 'px';
+                    popup.style.top = top + 'px';
+
+                    // If the field itself has scrolled out of view (e.g. the table body
+                    // was scrolled), close the popup instead of leaving it floating
+                    // in the wrong place.
+                    const tableScroll = triggerEl.closest('.table-scroll');
+                    if (tableScroll) {
+                        const boundsRect = tableScroll.getBoundingClientRect();
+                        if (rect.bottom < boundsRect.top || rect.top > boundsRect.bottom) {
+                            closeCalendar();
+                        }
+                    }
+                }
+
+                positionPopup();
+                activeCalRepositionFn = positionPopup;
+                window.addEventListener('scroll', positionPopup, true);
+                window.addEventListener('resize', positionPopup, true);
+
+                triggerEl.classList.add('active');
+                activeCalPopup = popup;
+                activeCalTrigger = triggerEl;
+
+                requestAnimationFrame(() => popup.classList.add('show'));
+
+                setTimeout(() => {
+                    document.addEventListener('mousedown', handleCalOutsideClick, true);
+                    document.addEventListener('keydown', handleCalEscape, true);
+                }, 0);
+            }
+
+            function renderStats() {
+                const statusCol = columns.find(c => c.type === 'status');
+                const companyCol = columns.find(c => c.id === 'company');
+                const titleCol = columns.find(c => c.id === 'title');
+                const dateAppliedCol = columns.find(c => c.id === 'dateApplied');
+                const counts = {};
+                let filledRows = 0;
+
+                function hasBasicInfo(row) {
+                    const company = companyCol ? (row[companyCol.id] || '').toString().trim() : '';
+                    const title = titleCol ? (row[titleCol.id] || '').toString().trim() : '';
+                    const dateApplied = dateAppliedCol ? (row[dateAppliedCol.id] || '').toString().trim() : '';
+                    return company.length > 0 && title.length > 0 && dateApplied.length > 0;
+                }
+
+                rows.forEach(r => {
+                    if (!hasBasicInfo(r)) return;
+                    filledRows++;
+                    if (statusCol) {
+                        const v = r[statusCol.id] || 'Unset';
+                        counts[v] = (counts[v] || 0) + 1;
+                    }
+                });
+
+                const el = document.getElementById('statsRow');
+
+                // Total pill - click to clear all highlights
+                let html = `<div class="stat-pill accent" id="stat-pill-total" style="cursor:pointer;" title="Click to clear highlights"><div class="num">${filledRows}</div><div class="lbl">Total</div></div>`;
+
+                const statusMeta = [
+                    { key: 'Applied', color: '#9ca3af' },
+                    { key: 'Interview', color: '#38bdf8' },
+                    { key: 'Offer', color: '#22c55e' },
+                    { key: 'Rejected', color: '#ef4444' },
+                    { key: 'Ghosted', color: '#9ca3af' },
+                    { key: 'Withdrawn', color: '#f97316' }
+                ];
+                statusMeta.forEach(({ key, color }) => {
+                    if (counts[key]) {
+                        html += `<div class="stat-pill" data-status="${key}" style="cursor:pointer;" title="Click to highlight ${key} rows"><div class="num" style="color:${color};">${counts[key]}</div><div class="lbl" style="color:${color};">${key}</div></div>`;
+                    }
+                });
+                el.innerHTML = html;
+
+                // Add click handlers
+                const totalPill = el.querySelector('#stat-pill-total');
+                if (totalPill) {
+                    totalPill.addEventListener('click', () => {
+                        clearRowHighlights();
+                    });
+                }
+
+                el.querySelectorAll('.stat-pill[data-status]').forEach(pill => {
+                    pill.addEventListener('click', () => {
+                        const status = pill.dataset.status;
+                        if (activeStatusFilter === status) {
+                            clearRowHighlights();
+                        } else {
+                            activeStatusFilter = status;
+                            highlightRowsByStatus(status);
+                        }
+                    });
+                });
+            }
+
+            function renderHeader() {
+                const headerRow = document.getElementById('headerRow');
+                headerRow.innerHTML = '';
+                columns.forEach((col, idx) => {
+                    const th = document.createElement('th');
+                    if (col.wide) th.classList.add('col-notes');
+                    th.draggable = true;
+                    th.dataset.colId = col.id;
+
+                    const inner = document.createElement('div');
+                    inner.className = 'th-inner';
+
+                    const grip = document.createElement('span');
+                    grip.className = 'col-grip';
+                    grip.textContent = '⋮⋮';
+                    grip.title = 'Drag to reorder';
+                    inner.appendChild(grip);
+
+                    const span = document.createElement('span');
+                    span.textContent = col.label;
+                    inner.appendChild(span);
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'del-col-btn';
+                    delBtn.innerHTML = '✕';
+                    delBtn.title = 'Delete column';
+                    delBtn.onclick = () => deleteColumn(col.id);
+                    inner.appendChild(delBtn);
+                    th.appendChild(inner);
+
+                    th.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', col.id);
+                        setTimeout(() => th.classList.add('col-dragging'), 0);
+                    });
+                    th.addEventListener('dragend', () => {
+                        th.classList.remove('col-dragging');
+                        headerRow.querySelectorAll('th').forEach(h => h.classList.remove('drag-over-left', 'drag-over-right'));
+                    });
+                    th.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        const rect = th.getBoundingClientRect();
+                        const before = (e.clientX - rect.left) < rect.width / 2;
+                        th.classList.toggle('drag-over-left', before);
+                        th.classList.toggle('drag-over-right', !before);
+                    });
+                    th.addEventListener('dragleave', () => {
+                        th.classList.remove('drag-over-left', 'drag-over-right');
+                    });
+                    th.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const draggedId = e.dataTransfer.getData('text/plain');
+                        const before = th.classList.contains('drag-over-left');
+                        th.classList.remove('drag-over-left', 'drag-over-right');
+                        if (!draggedId || draggedId === col.id) return;
+                        const fromIdx = columns.findIndex(c => c.id === draggedId);
+                        if (fromIdx === -1) return;
+                        const [moved] = columns.splice(fromIdx, 1);
+                        let toIdx = columns.findIndex(c => c.id === col.id);
+                        if (!before) toIdx += 1;
+                        columns.splice(toIdx, 0, moved);
+                        renderAll(document.getElementById('searchInput').value);
+                        scheduleSave();
+                        showToast('Column reordered');
+                    });
+
+                    headerRow.appendChild(th);
+                });
+                const thActions = document.createElement('th');
+                thActions.style.width = '40px';
+                headerRow.appendChild(thActions);
+            }
+
+            function renderBody(filterText) {
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+                const term = (filterText || '').trim().toLowerCase();
+
+                const visibleRows = rows.filter(r => {
+                    if (!term) return true;
+                    return columns.some(c => (r[c.id] || '').toString().toLowerCase().includes(term));
+                });
+
+                document.getElementById('emptyState').style.display = rows.length === 0 ? 'flex' : 'none';
+                document.getElementById('jobTable').style.display = rows.length === 0 ? 'none' : 'table';
+
+                visibleRows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.dataset.rowId = row.id;
+
+                    /* No automatic highlight - manual via stat-pill clicks */
+
+                    columns.forEach(col => {
+                        const td = document.createElement('td');
+
+                        if (col.type === 'select') {
+                            const sel = document.createElement('select');
+                            sel.className = 'type-select';
+                            sel.title = row[col.id] || '';
+                            const blankOpt = document.createElement('option');
+                            blankOpt.value = '';
+                            blankOpt.textContent = col.placeholder || 'Select';
+                            sel.appendChild(blankOpt);
+                            col.options.forEach(opt => {
+                                const o = document.createElement('option');
+                                o.value = opt; o.textContent = opt;
+                                if (row[col.id] === opt) o.selected = true;
+                                sel.appendChild(o);
+                            });
+                            sel.addEventListener('change', () => {
+                                row[col.id] = sel.value;
+                                sel.title = sel.value;
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                            });
+                            td.appendChild(sel);
+
+                        } else if (col.type === 'status') {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'status-badge-wrap';
+                            const sel = document.createElement('select');
+                            sel.className = 'status-select ' + statusClass(row[col.id]);
+                            sel.title = row[col.id] || '';
+                            const blankOpt = document.createElement('option');
+                            blankOpt.value = '';
+                            blankOpt.textContent = col.placeholder || 'Select';
+                            sel.appendChild(blankOpt);
+                            col.options.forEach(opt => {
+                                const o = document.createElement('option');
+                                o.value = opt; o.textContent = opt;
+                                if (row[col.id] === opt) o.selected = true;
+                                sel.appendChild(o);
+                            });
+                            sel.addEventListener('change', () => {
+                                row[col.id] = sel.value;
+                                sel.className = 'status-select ' + statusClass(sel.value);
+                                sel.title = sel.value;
+                                enforceInterviewConstraint(row, tr);
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                            });
+                            wrap.appendChild(sel);
+                            td.appendChild(wrap);
+
+                        } else if (col.type === 'date') {
+                            const div = document.createElement('div');
+                            div.className = 'date-cell-inner';
+                            div.tabIndex = 0;
+
+                            const icon = document.createElement('span');
+                            icon.className = 'cal-icon';
+                            icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+                            div.appendChild(icon);
+
+                            const textSpan = document.createElement('span');
+                            textSpan.className = 'date-text' + (row[col.id] ? '' : ' placeholder');
+                            textSpan.textContent = row[col.id] || 'mm/dd/yyyy';
+                            div.appendChild(textSpan);
+
+                            const clearBtn = document.createElement('button');
+                            clearBtn.className = 'date-clear';
+                            clearBtn.innerHTML = '✕';
+                            clearBtn.title = 'Clear date';
+                            clearBtn.style.display = row[col.id] ? '' : 'none';
+                            clearBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                row[col.id] = '';
+                                textSpan.textContent = 'mm/dd/yyyy';
+                                textSpan.className = 'date-text placeholder';
+                                clearBtn.style.display = 'none';
+                                if (col.id === 'interviewDate') {
+                                    enforceInterviewConstraint(row, tr);
+                                }
+                                if (col.id === 'dateApplied' && dateAppliedWarnIcon) {
+                                    dateAppliedWarnIcon.style.display = 'inline-flex';
+                                }
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                            });
+                            div.appendChild(clearBtn);
+
+                            let dateAppliedWarnIcon = null;
+                            if (col.id === 'interviewDate') {
+                                const warnIcon = document.createElement('span');
+                                warnIcon.className = 'date-warning-icon';
+                                warnIcon.title = 'Interview Date is needed — status set to Applied';
+                                warnIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 004 21h16a2 2 0 001.89-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>';
+                                div.appendChild(warnIcon);
+                            } else if (col.id === 'dateApplied') {
+                                dateAppliedWarnIcon = document.createElement('span');
+                                dateAppliedWarnIcon.className = 'date-warning-icon';
+                                dateAppliedWarnIcon.title = "Date Applied is required — this row won't count toward your stats until it's filled in.";
+                                dateAppliedWarnIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 004 21h16a2 2 0 001.89-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>';
+                                dateAppliedWarnIcon.style.display = row[col.id] ? 'none' : 'inline-flex';
+                                div.appendChild(dateAppliedWarnIcon);
+                            }
+
+                            div.addEventListener('click', () => {
+                                const todayStr = formatDateStr(new Date());
+                                let minDateStr = null;
+                                let maxDateStr = null;
+
+                                if (col.id === 'dateApplied') {
+                                    // Date Applied: only Jan 1, 2026 through today
+                                    minDateStr = '01/01/2026';
+                                    maxDateStr = todayStr;
+                                } else if (col.id === 'deadline' || col.id === 'interviewDate') {
+                                    // Deadline / Interview Date: today onwards, and never
+                                    // before Date Applied (if that's later than today)
+                                    minDateStr = todayStr;
+                                    const appliedStr = row['dateApplied'];
+                                    if (appliedStr) {
+                                        const appliedNum = dateStrToNum(appliedStr);
+                                        const todayNum = dateStrToNum(todayStr);
+                                        if (appliedNum !== null && appliedNum > todayNum) {
+                                            minDateStr = appliedStr;
+                                        }
+                                    }
+                                }
+
+                                openCalendar(div, row[col.id], (newVal) => {
+                                    row[col.id] = newVal;
+                                    textSpan.textContent = newVal || 'mm/dd/yyyy';
+                                    textSpan.className = 'date-text' + (newVal ? '' : ' placeholder');
+                                    clearBtn.style.display = newVal ? '' : 'none';
+                                    if (col.id === 'interviewDate') {
+                                        // A date was picked (or cleared via the calendar's Clear button).
+                                        // Auto-set status to Interview when a date now exists; either way,
+                                        // let the shared helper reconcile status + warning icon + DOM.
+                                        const statusCol = columns.find(c => c.type === 'status');
+                                        if (statusCol && newVal) {
+                                            row[statusCol.id] = 'Interview';
+                                        }
+                                        enforceInterviewConstraint(row, tr, { silent: true });
+                                    }
+                                    if (col.id === 'dateApplied' && dateAppliedWarnIcon) {
+                                        dateAppliedWarnIcon.style.display = newVal ? 'none' : 'inline-flex';
+                                    }
+                                    renderStats();
+                                    renderInterviewDropdown();
+                                    scheduleSave();
+                                }, minDateStr, maxDateStr);
+                            });
+                            div.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    div.click();
+                                }
+                            });
+
+                            td.appendChild(div);
+
+                        } else if (col.type === 'link') {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'link-cell';
+                            const div = document.createElement('div');
+                            div.className = 'cell-inner';
+                            div.style.flex = '1';
+                            div.contentEditable = true;
+                            div.dataset.placeholder = col.placeholder || '';
+                            wireTruncatedCell(div, () => row[col.id]);
+                            div.addEventListener('input', () => {
+                                row[col.id] = div.textContent.trim();
+                            });
+                            div.addEventListener('blur', () => {
+                                row[col.id] = div.textContent.trim();
+                                div.textContent = truncateForDisplay(row[col.id]);
+                                div.title = row[col.id];
+                                renderLinkIcon();
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                            });
+                            div.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    const val = div.textContent.trim();
+                                    row[col.id] = val;
+                                    renderLinkIcon();
+                                    scheduleSave();
+                                    div.blur();
+                                    if (val) {
+                                        try {
+                                            const url = /^https?:\/\//.test(val) ? val : 'https://' + val;
+                                            const tempA = document.createElement('a');
+                                            tempA.href = url;
+                                            tempA.target = '_blank';
+                                            tempA.rel = 'noopener noreferrer';
+                                            document.body.appendChild(tempA);
+                                            tempA.click();
+                                            document.body.removeChild(tempA);
+                                        } catch (err) {
+                                            showToast('Could not open link — try the link icon instead', true);
+                                        }
+                                    }
+                                }
+                            });
+                            wrap.appendChild(div);
+                            let iconHolder = document.createElement('span');
+                            wrap.appendChild(iconHolder);
+                            function renderLinkIcon() {
+                                iconHolder.innerHTML = '';
+                                const url = row[col.id];
+                                if (url) {
+                                    const a = document.createElement('a');
+                                    a.href = /^https?:\/\//.test(url) ? url : 'https://' + url;
+                                    a.target = '_blank';
+                                    a.rel = 'noopener noreferrer';
+                                    a.className = 'link-open';
+                                    a.title = 'Open link';
+                                    a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>';
+                                    iconHolder.appendChild(a);
+                                }
+                            }
+                            renderLinkIcon();
+                            td.appendChild(wrap);
+
+                        } else if (col.type === 'contact') {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'link-cell';
+                            const div = document.createElement('div');
+                            div.className = 'cell-inner';
+                            div.style.flex = '1';
+                            div.contentEditable = true;
+                            div.dataset.placeholder = col.placeholder || '';
+                            wireTruncatedCell(div, () => row[col.id]);
+                            div.addEventListener('input', () => {
+                                row[col.id] = div.textContent.trim();
+                            });
+                            div.addEventListener('blur', () => {
+                                row[col.id] = div.textContent.trim();
+                                div.textContent = truncateForDisplay(row[col.id]);
+                                div.title = row[col.id];
+                                renderCopyIcon();
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                            });
+                            div.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    div.blur();
+                                }
+                            });
+                            wrap.appendChild(div);
+                            let iconHolder = document.createElement('span');
+                            wrap.appendChild(iconHolder);
+                            function renderCopyIcon() {
+                                iconHolder.innerHTML = '';
+                                const val = row[col.id];
+                                if (val) {
+                                    const btn = document.createElement('button');
+                                    btn.className = 'link-open';
+                                    btn.title = 'Copy to clipboard';
+                                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+                                    btn.addEventListener('click', async () => {
+                                        try {
+                                            await navigator.clipboard.writeText(val);
+                                            showToast('Copied "' + val + '"');
+                                        } catch (e) {
+                                            showToast('Could not copy', true);
+                                        }
+                                    });
+                                    iconHolder.appendChild(btn);
+                                }
+                            }
+                            renderCopyIcon();
+                            td.appendChild(wrap);
+
+                        } else {
+                            const isRequiredTextField = (col.id === 'company' || col.id === 'title');
+                            const div = document.createElement('div');
+                            div.className = 'cell-inner';
+                            div.contentEditable = true;
+                            div.dataset.placeholder = col.placeholder || '';
+                            if (isRequiredTextField) div.style.flex = '1';
+                            wireTruncatedCell(div, () => row[col.id]);
+
+                            let requiredWarnIcon = null;
+                            let cellWrap = null;
+                            if (isRequiredTextField) {
+                                cellWrap = document.createElement('div');
+                                cellWrap.className = 'link-cell';
+                                requiredWarnIcon = document.createElement('span');
+                                requiredWarnIcon.className = 'date-warning-icon';
+                                requiredWarnIcon.title = (col.id === 'company' ? 'Company Name' : 'Job Title') + " is required — this row won't count toward your stats until it's filled in.";
+                                requiredWarnIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 004 21h16a2 2 0 001.89-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>';
+                                requiredWarnIcon.style.display = (row[col.id] || '').toString().trim() ? 'none' : 'inline-flex';
+                            }
+
+                            div.addEventListener('input', () => {
+                                row[col.id] = div.textContent.trim();
+                                renderStats();
+                                renderInterviewDropdown();
+                                if (requiredWarnIcon) {
+                                    requiredWarnIcon.style.display = row[col.id] ? 'none' : 'inline-flex';
+                                }
+                            });
+                            div.addEventListener('blur', () => {
+                                let val = div.textContent.trim();
+                                if (col.id === 'salary') val = formatSalary(val);
+                                row[col.id] = val;
+                                div.textContent = truncateForDisplay(val);
+                                div.title = val;
+                                renderStats();
+                                renderInterviewDropdown();
+                                scheduleSave();
+                                if (requiredWarnIcon) {
+                                    requiredWarnIcon.style.display = val ? 'none' : 'inline-flex';
+                                }
+                            });
+                            div.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter' && !e.shiftKey && col.type !== 'notes-multiline') {
+                                    e.preventDefault();
+                                    if (col.id === 'salary') {
+                                        div.textContent = formatSalary(div.textContent.trim());
+                                        placeCaretAtEnd(div);
+                                    }
+                                    div.blur();
+                                }
+                            });
+
+                            if (isRequiredTextField) {
+                                cellWrap.appendChild(div);
+                                cellWrap.appendChild(requiredWarnIcon);
+                                td.appendChild(cellWrap);
+                            } else {
+                                td.appendChild(div);
+                            }
+                        }
+
+                        tr.appendChild(td);
+                    });
+
+                    // Defensive check: if this row somehow has status "Interview" with
+                    // no interview date (e.g. synced in from another device/session),
+                    // correct it silently on render rather than surfacing a toast.
+                    enforceInterviewConstraint(row, tr, { silent: true });
+
+                    const tdActions = document.createElement('td');
+                    tdActions.className = 'row-actions';
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'row-del-btn';
+                    delBtn.innerHTML = '✕';
+                    delBtn.title = 'Delete row';
+                    delBtn.onclick = () => deleteRow(row.id);
+                    tdActions.appendChild(delBtn);
+                    tr.appendChild(tdActions);
+
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function renderInterviewDropdown() {
+                const statusCol = columns.find(c => c.type === 'status');
+                const interviewDateCol = columns.find(c => c.id === 'interviewDate' || c.label === 'Interview Date');
+                const companyCol = columns.find(c => c.id === 'company');
+                const titleCol = columns.find(c => c.id === 'title');
+                const dateAppliedCol = columns.find(c => c.id === 'dateApplied');
+                const locationCol = columns.find(c => c.id === 'location');
+                const notesCol = columns.find(c => c.id === 'notes');
+
+                const listEl = document.getElementById('interviewDropdownList');
+                if (!listEl) return;
+
+                if (!statusCol || !interviewDateCol) {
+                    listEl.innerHTML = '<div class="interview-dropdown-empty">No interview column found</div>';
+                    return;
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const interviewRows = rows.filter(r => {
+                    if (r[statusCol.id] !== 'Interview') return false;
+
+                    // Must have basic info: company, title, dateApplied, AND interviewDate
+                    const company = companyCol ? (r[companyCol.id] || '').toString().trim() : '';
+                    const title = titleCol ? (r[titleCol.id] || '').toString().trim() : '';
+                    const dateApplied = dateAppliedCol ? (r[dateAppliedCol.id] || '').toString().trim() : '';
+                    const interviewDate = (r[interviewDateCol.id] || '').toString().trim();
+
+                    if (!company || !title || !dateApplied || !interviewDate) return false;
+
+                    const d = parseDateStr(interviewDate);
+                    if (!d) return false;
+                    return d >= today || d.toDateString() === today.toDateString();
+                }).sort((a, b) => {
+                    const da = parseDateStr(a[interviewDateCol.id]);
+                    const db = parseDateStr(b[interviewDateCol.id]);
+                    if (!da && !db) return 0;
+                    if (!da) return 1;
+                    if (!db) return -1;
+                    return da - db;
+                });
+
+                if (interviewRows.length === 0) {
+                    listEl.innerHTML = '<div class="interview-dropdown-empty">No upcoming interviews</div>';
+                    return;
+                }
+
+                listEl.innerHTML = '';
+                interviewRows.forEach(r => {
+                    const company = (companyCol ? (r[companyCol.id] || '—') : '—');
+                    const title = (titleCol ? (r[titleCol.id] || '') : '');
+                    const dateStr = r[interviewDateCol.id] || 'No date set';
+                    const location = (locationCol ? (r[locationCol.id] || '') : '');
+                    const notes = (notesCol ? (r[notesCol.id] || '') : '');
+
+                    const item = document.createElement('div');
+                    item.className = 'interview-item';
+                    item.style.cursor = 'pointer';
+                    item.title = 'Click to jump to this row';
+                    item.dataset.rowId = r.id;
+
+                    let itemHtml = '';
+                    itemHtml += '<div class="interview-item-company">' + escapeHtml(company) + '</div>';
+                    if (title) itemHtml += '<div class="interview-item-title">' + escapeHtml(title) + '</div>';
+                    itemHtml += '<div class="interview-item-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + escapeHtml(dateStr) + '</div>';
+                    if (location) itemHtml += '<div class="interview-item-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' + escapeHtml(location) + '</div>';
+                    if (notes) itemHtml += '<div class="interview-item-notes"><div class="interview-item-notes-label">Notes</div>' + escapeHtml(notes) + '</div>';
+                    item.innerHTML = itemHtml;
+
+                    item.addEventListener('click', () => {
+                        closeInterviewDropdown();
+                        const targetRow = document.querySelector('tr[data-row-id="' + r.id + '"]');
+                        if (targetRow) {
+                            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetRow.style.transition = 'box-shadow .3s ease, background .3s ease';
+                            targetRow.style.boxShadow = 'inset 0 0 0 2px #38bdf8, 0 0 20px rgba(56,189,248,0.3)';
+                            targetRow.style.background = 'rgba(56,189,248,0.06)';
+                            setTimeout(() => {
+                                targetRow.style.boxShadow = '';
+                                targetRow.style.background = '';
+                                targetRow.style.transition = '';
+                            }, 2000);
+                            const firstCell = targetRow.querySelector('.cell-inner, select, .date-cell-inner');
+                            if (firstCell) firstCell.focus({ preventScroll: true });
+                        }
+                    });
+
+                    listEl.appendChild(item);
+                });
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            function renderAll(filterText) {
+                renderHeader();
+                renderBody(filterText);
+                renderStats();
+                renderInterviewDropdown();
+                adjustTableScrollHeight();
+            }
+
+            // The table area is sized to show only whole rows, using however much
+            // vertical space is actually left in the viewport (after the header,
+            // toolbar, and footer). This way the page itself never needs to scroll —
+            // only .table-scroll does — and a row is never partially cut off.
+            const MAX_PREFERRED_ROWS = 5;
+            const FIXED_ROW_HEIGHT = 88; // must match tbody tr { height } in CSS
+
+            function adjustTableScrollHeight() {
+                const scrollEl = document.querySelector('.table-scroll');
+                const thead = document.querySelector('#jobTable thead');
+                const tbody = document.getElementById('tableBody');
+                if (!scrollEl || !thead || !tbody) return;
+
+                const rowCount = tbody.querySelectorAll('tr').length;
+                if (rowCount === 0) {
+                    scrollEl.style.height = '';
+                    return;
+                }
+
+                // Measure everything else on the page (header, toolbar, footer, card
+                // borders, padding) by collapsing the row area to 0 first.
+                scrollEl.style.height = '0px';
+                const wrap = document.querySelector('.wrap');
+                const shellHeight = wrap.offsetHeight;
+                const theadH = thead.offsetHeight;
+
+                const safetyMargin = 8;
+                const availableForRows = window.innerHeight - shellHeight - theadH - safetyMargin;
+                let rowsToShow = Math.floor(availableForRows / FIXED_ROW_HEIGHT);
+                rowsToShow = Math.max(1, Math.min(rowsToShow, MAX_PREFERRED_ROWS, rowCount));
+
+                scrollEl.style.height = (theadH + rowsToShow * FIXED_ROW_HEIGHT) + 'px';
+            }
+
+            window.addEventListener('resize', () => adjustTableScrollHeight());
+
+            function addRow() {
+                rows.push(newRow());
+                renderAll(document.getElementById('searchInput').value);
+                scheduleSave();
+                showToast('Row added');
+            }
+
+            function deleteRow(id) {
+                openConfirmModal({
+                    title: 'Delete this row?',
+                    message: "This application entry will be removed. This can't be undone.",
+                    onConfirm: () => {
+                        rows = rows.filter(r => r.id !== id);
+                        renderAll(document.getElementById('searchInput').value);
+                        scheduleSave();
+                        showToast('Row deleted');
+                    }
+                });
+            }
+
+            function openAddColumnModal() {
+                document.getElementById('colNameInput').value = '';
+                document.getElementById('colTypeInput').value = 'text';
+                document.getElementById('colOptionsInput').value = '';
+                document.getElementById('colOptionsWrap').style.display = 'none';
+
+                const posSelect = document.getElementById('colPositionInput');
+                posSelect.innerHTML = '';
+                const endOpt = document.createElement('option');
+                endOpt.value = columns.length;
+                endOpt.textContent = 'At the end';
+                posSelect.appendChild(endOpt);
+                const startOpt = document.createElement('option');
+                startOpt.value = 0;
+                startOpt.textContent = 'At the beginning';
+                posSelect.appendChild(startOpt);
+                columns.forEach((c, idx) => {
+                    const o = document.createElement('option');
+                    o.value = idx + 1;
+                    o.textContent = 'After "' + c.label + '"';
+                    posSelect.appendChild(o);
+                });
+                posSelect.value = columns.length;
+
+                document.getElementById('colModalOverlay').classList.add('show');
+                setTimeout(() => document.getElementById('colNameInput').focus(), 50);
+            }
+
+            function closeAddColumnModal() {
+                document.getElementById('colModalOverlay').classList.remove('show');
+            }
+
+            function confirmAddColumn() {
+                const label = document.getElementById('colNameInput').value.trim();
+                if (!label) {
+                    showToast('Column needs a name', true);
+                    return;
+                }
+                const type = document.getElementById('colTypeInput').value;
+                let options = [];
+                if (type === 'select') {
+                    const optStr = document.getElementById('colOptionsInput').value;
+                    options = optStr.split(',').map(s => s.trim()).filter(Boolean);
+                    if (options.length === 0) options = ['Option 1'];
+                }
+                const insertAt = parseInt(document.getElementById('colPositionInput').value, 10);
+                const col = {
+                    id: uid('col'),
+                    label: label,
+                    type: type,
+                    options: options,
+                    placeholder: type === 'select' ? 'Select' : (type === 'date' ? 'mm/dd/yyyy' : 'Enter value')
+                };
+                columns.splice(insertAt, 0, col);
+                rows.forEach(r => r[col.id] = '');
+                renderAll(document.getElementById('searchInput').value);
+                scheduleSave();
+                if (supabaseClient) {
+                    showToast('Column added — note: custom columns save locally only, not to cloud sync', true);
+                } else {
+                    showToast('Column "' + col.label + '" added');
+                }
+                closeAddColumnModal();
+            }
+
+            document.getElementById('colTypeInput').addEventListener('change', (e) => {
+                document.getElementById('colOptionsWrap').style.display = e.target.value === 'select' ? 'block' : 'none';
+            });
+            document.getElementById('colCancelBtn').addEventListener('click', closeAddColumnModal);
+            document.getElementById('colConfirmBtn').addEventListener('click', confirmAddColumn);
+            document.getElementById('colModalOverlay').addEventListener('click', (e) => {
+                if (e.target.id === 'colModalOverlay') closeAddColumnModal();
+            });
+            document.getElementById('colNameInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') confirmAddColumn();
+            });
+
+            // --- Generic glassy confirm-delete modal ---
+            let pendingConfirmAction = null;
+
+            function openConfirmModal({ title, message, onConfirm }) {
+                document.getElementById('confirmModalTitle').textContent = title;
+                document.getElementById('confirmModalMessage').textContent = message;
+                pendingConfirmAction = onConfirm;
+                document.getElementById('confirmModalOverlay').classList.add('show');
+                setTimeout(() => document.getElementById('confirmCancelBtn').focus(), 50);
+            }
+
+            function closeConfirmModal() {
+                document.getElementById('confirmModalOverlay').classList.remove('show');
+                pendingConfirmAction = null;
+            }
+
+            document.getElementById('confirmCancelBtn').addEventListener('click', closeConfirmModal);
+            document.getElementById('confirmYesBtn').addEventListener('click', () => {
+                const action = pendingConfirmAction;
+                closeConfirmModal();
+                if (action) action();
+            });
+            document.getElementById('confirmModalOverlay').addEventListener('click', (e) => {
+                if (e.target.id === 'confirmModalOverlay') closeConfirmModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.getElementById('confirmModalOverlay').classList.contains('show')) {
+                    closeConfirmModal();
+                }
+            });
+
+            function deleteColumn(colId) {
+                const col = columns.find(c => c.id === colId);
+                if (!col) return;
+                openConfirmModal({
+                    title: 'Delete this column?',
+                    message: `"${col.label}" and all its data across every row will be removed. This can't be undone.`,
+                    onConfirm: () => {
+                        columns = columns.filter(c => c.id !== colId);
+                        rows.forEach(r => delete r[colId]);
+                        renderAll(document.getElementById('searchInput').value);
+                        scheduleSave();
+                        showToast('Column deleted');
+                    }
+                });
+            }
+
+            function exportCSV() {
+                const header = columns.map(c => '"' + c.label.replace(/"/g, '""') + '"').join(',');
+                const lines = rows.map(r => columns.map(c => '"' + (r[c.id] || '').toString().replace(/"/g, '""') + '"').join(','));
+                const csv = [header, ...lines].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'job-application-tracker.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('CSV exported');
+            }
+
+            document.getElementById('addRowBtn').addEventListener('click', addRow);
+            document.getElementById('addColBtn').addEventListener('click', openAddColumnModal);
+            document.getElementById('exportBtn').addEventListener('click', exportCSV);
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                renderBody(e.target.value);
+                adjustTableScrollHeight();
+            });
+
+            // Interview dropdown click handler
+            let interviewDropdownOpen = false;
+            const interviewDropdownBtn = document.getElementById('interviewDropdownBtn');
+            const interviewDropdownMenu = document.getElementById('interviewDropdownMenu');
+
+            function toggleInterviewDropdown() {
+                interviewDropdownOpen = !interviewDropdownOpen;
+                if (interviewDropdownOpen) {
+                    interviewDropdownMenu.classList.add('show');
+                    interviewDropdownBtn.classList.add('active');
+                    document.addEventListener('mousedown', handleInterviewOutsideClick, true);
+                    document.addEventListener('keydown', handleInterviewEscape, true);
+                } else {
+                    closeInterviewDropdown();
+                }
+            }
+
+            function closeInterviewDropdown() {
+                interviewDropdownOpen = false;
+                interviewDropdownMenu.classList.remove('show');
+                interviewDropdownBtn.classList.remove('active');
+                document.removeEventListener('mousedown', handleInterviewOutsideClick, true);
+                document.removeEventListener('keydown', handleInterviewEscape, true);
+            }
+
+            function handleInterviewOutsideClick(e) {
+                if (interviewDropdownMenu && !interviewDropdownMenu.contains(e.target) && !(interviewDropdownBtn && interviewDropdownBtn.contains(e.target))) {
+                    closeInterviewDropdown();
+                }
+            }
+            function handleInterviewEscape(e) {
+                if (e.key === 'Escape') closeInterviewDropdown();
+            }
+
+            interviewDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleInterviewDropdown();
+            });
+
+            // --- Cloud sync (Supabase) settings modal ---
+            const syncStatusBtn = document.getElementById('syncStatusBtn');
+            const syncModalOverlay = document.getElementById('syncModalOverlay');
+            const syncKeyInput = document.getElementById('syncKeyInput');
+            const syncModalStatusText = document.getElementById('syncModalStatusText');
+
+            function openSyncModal() {
+                syncKeyInput.value = getSyncKey();
+                if (supabaseClient) {
+                    if (lastSyncErrorMsg) {
+                        syncModalStatusText.innerHTML = 'Connected to Supabase, but the last sync attempt failed:<br><span style="color:#ff9c9c;">' + escapeHtml(lastSyncErrorMsg) + '</span>';
+                    } else {
+                        syncModalStatusText.textContent = 'Connected to Supabase. This board syncs using the key below.';
+                    }
+                } else {
+                    syncModalStatusText.textContent = 'Not connected — add your Supabase URL and anon key in the script (SUPABASE_URL / SUPABASE_ANON_KEY) to enable cloud sync. Data is currently saved to this browser only.';
+                }
+                syncModalOverlay.classList.add('show');
+            }
+            function closeSyncModal() {
+                syncModalOverlay.classList.remove('show');
+            }
+            syncStatusBtn.addEventListener('click', openSyncModal);
+            document.getElementById('syncCancelBtn').addEventListener('click', closeSyncModal);
+            syncModalOverlay.addEventListener('click', (e) => {
+                if (e.target.id === 'syncModalOverlay') closeSyncModal();
+            });
+            document.getElementById('syncKeyCopyBtn').addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(syncKeyInput.value);
+                    showToast('Sync key copied');
+                } catch (e) {
+                    showToast('Could not copy', true);
+                }
+            });
+            document.getElementById('syncApplyBtn').addEventListener('click', async () => {
+                const newKey = syncKeyInput.value.trim();
+                if (!newKey) {
+                    showToast('Sync key cannot be empty', true);
+                    return;
+                }
+                setSyncKey(newKey);
+                closeSyncModal();
+                showToast('Loading data for this sync key…');
+                await loadData();
+                renderAll('');
+            });
+
+            (async function init() {
+                await loadData();
+                renderAll('');
+            })();
+        })();
+    </script>
+</body>
+
+</html>
